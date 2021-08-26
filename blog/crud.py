@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from . import models, schemas
@@ -32,11 +33,16 @@ def create_blog(db: Session, blog: schemas.BlogCreate):
     return db_blog
 
 
-def update_Blog(db: Session, blog: schemas.BlogCreate, blog_id: int):
+def update_Blog(blog_id: int, request: schemas.Blog, db: Session):
     db_blog = db.query(models.Blog).filter(
-        models.Blog.title == blog_id
+        models.Blog.id == blog_id
     )
-    db_blog.update(blog)
+    if not db_blog.first():
+        raise HTTPException(
+            status_code=404, 
+            detail=f'Blog with id {blog_id} does not exists'
+        )
+
+    db_blog.update(request)
     db.commit()
-    db.refresh(db_blog)
     return 'Updated Successfully'

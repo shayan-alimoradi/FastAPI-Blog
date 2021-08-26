@@ -65,17 +65,11 @@ def delete_blog(
     return 'Deleted Successfully'
 
 
-@router.put('/update/{blog_id}', response_model=schemas.Blog, status_code=200)
+@router.put('/update/{blog_id}', status_code=200)
 def update_blog(
     blog_id: int, 
-    request: schemas.BlogCreate, 
+    request: schemas.Blog, 
     db: Session = Depends(database.get_db),
     current_user: User = Depends(get_current_user)
 ):
-    blog = db.query(models.Blog).filter(models.Blog.id == blog_id)
-    if not blog.first():
-        raise HTTPException(status_code=404, detail='Blog not found')
-
-    blog.update(blog)
-    db.commit()
-    return 'Updated Successfully'
+    return crud.update_Blog(blog_id, request, db)
