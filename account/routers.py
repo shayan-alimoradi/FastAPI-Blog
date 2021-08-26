@@ -40,3 +40,12 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(database.get_db)
     if db_user:
         raise HTTPException(status_code=400, detail='Email already registered')
     return crud.create_user(db=db, user=user)
+
+
+# @router.put('/update/{user_id}', status_code=200)
+# def update_user(
+#     user_id: int, 
+#     user: schemas.UserCreate,
+#     db: Session = Depends(database.get_db), 
+# ):
+#     return crud.update_user(user_id, db, user)

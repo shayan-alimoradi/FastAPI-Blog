@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from passlib.context import CryptContext
 
+from fastapi import HTTPException
 from pydantic import EmailStr
 
 from . import models, schemas
@@ -26,3 +26,15 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.commit()
     db.refresh(db_user)
     return db_user
+
+
+def update_user(user_id: int, db: Session, user: schemas.UserCreate):
+    db_user = db.query(models.User).filter(models.User.id == user_id)
+    if not db_user.first():
+        raise HTTPException(
+            status_code=404, 
+            detail=f'User with id {user_id} does not exists'
+        )
+    db_user.update(user)
+    db.commit()
+    return 'Done'
