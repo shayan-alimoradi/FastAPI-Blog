@@ -38,11 +38,13 @@ def read_blog(blog_id: int, db: Session = Depends(database.get_db)):
 def create_blog(
     blog: schemas.BlogCreate,
     db: Session = Depends(database.get_db),
+    current_user: User = Depends(get_current_user),
 ):
     db_blog = crud.get_blog_by_title(db, title=blog.title)
     if db_blog:
         raise HTTPException(
-            status_code=400, detail=f"Blog with title {blog.title} already exists"
+            status_code=400, 
+            detail=f"Blog with title {blog.title} already exists"
         )
     return crud.create_blog(db=db, blog=blog)
 
@@ -51,6 +53,7 @@ def create_blog(
 def delete_blog(
     blog_id: int,
     db: Session = Depends(database.get_db),
+    current_user: User = Depends(get_current_user),
 ):
     db.query(models.Blog).filter(models.Blog.id == blog_id).delete(
         synchronize_session=False
@@ -64,5 +67,6 @@ def update_blog(
     blog_id: int,
     request: Blog,
     db: Session = Depends(database.get_db),
+    current_user: User = Depends(get_current_user),
 ):
     return crud.update_Blog(blog_id, request, db)
