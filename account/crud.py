@@ -7,19 +7,19 @@ from . import models, schemas
 from .hashing import Hash
 
 
-def get_user(db: Session, user_id: int):
+async def get_user(db: Session, user_id: int):
     return db.query(models.User).filter(models.User.id == user_id).first()
 
 
-def get_user_by_email(db: Session, email: EmailStr):
+async def get_user_by_email(db: Session, email: EmailStr):
     return db.query(models.User).filter(models.User.email == email).first()
 
 
-def get_users(db: Session, skip: int = 0, limit: int = 100):
+async def get_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.User).offset(skip).limit(limit).all()
 
 
-def create_user(db: Session, user: schemas.UserCreate):
+async def create_user(db: Session, user: schemas.UserCreate):
     hashed_password = Hash.bcrypt(user.password)
     db_user = models.User(email=user.email, hashed_password=hashed_password)
     db.add(db_user)
@@ -28,7 +28,7 @@ def create_user(db: Session, user: schemas.UserCreate):
     return db_user
 
 
-def update_user(user_id: int, db: Session, user: schemas.UserCreate):
+async def update_user(user_id: int, db: Session, user: schemas.UserCreate):
     db_user = db.query(models.User).filter(models.User.id == user_id)
     if not db_user.first():
         raise HTTPException(
@@ -42,7 +42,7 @@ def update_user(user_id: int, db: Session, user: schemas.UserCreate):
     return "Done"
 
 
-def delete_user(user_id: int, db: Session):
+async def delete_user(user_id: int, db: Session):
     user = db.query(models.User).filter(models.User.id == user_id).first()
     db.delete(user)
     db.commit()

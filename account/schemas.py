@@ -25,14 +25,14 @@ class User(UserBase):
 class UserBlog(UserBase):
     id: int
     is_active: Optional[bool] = True
-    # blogs: List[BlogBase] = []
 
     class Config:
         orm_mode = True
 
 
 class Blog(BlogBase):
-    user: UserBlog
+    id: int
+    user: UserBlog = None
 
     class Config:
         orm_mode = True
