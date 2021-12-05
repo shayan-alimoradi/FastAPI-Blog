@@ -1,7 +1,7 @@
 from typing import List, Optional
 from pydantic import BaseModel, EmailStr
 
-from blog.schemas import Blog
+from blog.schemas import BlogBase
 
 
 class UserBase(BaseModel):
@@ -15,7 +15,24 @@ class UserCreate(UserBase):
 class User(UserBase):
     id: int
     is_active: Optional[bool] = True
-    blogs: List[Blog] = []
+    blogs: List[BlogBase] = []
+
+    class Config:
+        orm_mode = True
+
+
+# User for Blog
+class UserBlog(UserBase):
+    id: int
+    is_active: Optional[bool] = True
+    # blogs: List[BlogBase] = []
+
+    class Config:
+        orm_mode = True
+
+
+class Blog(BlogBase):
+    user: UserBlog
 
     class Config:
         orm_mode = True

@@ -32,9 +32,18 @@ def update_user(user_id: int, db: Session, user: schemas.UserCreate):
     db_user = db.query(models.User).filter(models.User.id == user_id)
     if not db_user.first():
         raise HTTPException(
-            status_code=404, 
-            detail=f'User with id {user_id} does not exists'
+            status_code=404, detail=f"User with id {user_id} does not exists"
         )
-    db_user.update(user)
+    db_user.update({
+        models.User.email: user.email,
+        models.User.hashed_password: Hash.bcrypt(user.password)
+    })
+    db.commit()
+    return "Done"
+
+
+def delete_user(user_id: int, db: Session):
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    db.delete(user)
     db.commit()
     return 'Done'

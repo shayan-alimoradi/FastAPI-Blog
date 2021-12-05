@@ -7,11 +7,9 @@ class BlogBase(BaseModel):
     description: Optional[str] = None
     available: Optional[bool] = True
 
-
-class BlogCreate(BlogBase):
-    pass
-
-
-class Blog(BlogBase):
     class Config:
         orm_mode = True
+
+
+class BlogCreate(BlogBase):
+    user_id: int
