@@ -54,7 +54,7 @@ async def delete_blog(
     db: Session = Depends(database.get_db),
     current_user: User = Depends(get_current_active_user),
 ):
-    await crud.delete_blog(blog_id, db)
+    await crud.delete_blog(blog_id, db, current_user)
 
 
 @router.put("/update/{blog_id}", status_code=200)
@@ -64,4 +64,4 @@ async def update_blog(
     db: Session = Depends(database.get_db),
     current_user: User = Depends(get_current_active_user),
 ):
-    return await crud.update_Blog(blog_id, request, db)
+    return await crud.update_Blog(blog_id, request, db, current_user)

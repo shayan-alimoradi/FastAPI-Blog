@@ -8,7 +8,6 @@ from sqlalchemy.orm import Session
 from jose import jwt, JWTError
 
 from . import schemas, models
-from .token import create_access_token
 from .hashing import Hash
 import database
 
@@ -20,25 +19,6 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="sign-in")
-
-
-# @router.post("/sign-in")
-# def sign_in(
-#     request: OAuth2PasswordRequestForm = Depends(),
-#     db: Session = Depends(database.get_db),
-# ):
-#     user = db.query(models.User).filter(models.User.email == request.username).first()
-#     if not user:
-#         raise HTTPException(status_code=404, detail="Invalid Credentials")
-
-#     if not Hash.verify(user.hashed_password, request.password):
-#         raise HTTPException(status_code=400, detail="Invalid Email or Password")
-#     # generate the jwt token
-#     access_token_expires = timedelta(minutes=30)
-#     access_token = create_access_token(
-#         data={"sub": user.email}, expires_delta=access_token_expires
-#     )
-#     return {"access_token": access_token, "token_type": "bearer"}
 
 
 def get_user(db, username: str):
@@ -89,7 +69,6 @@ async def get_current_user(
         .filter(models.User.username == token_data.username)
         .first()
     )
-    # user = token_data.username
     if user is None:
         raise credentials_exception
     return user
