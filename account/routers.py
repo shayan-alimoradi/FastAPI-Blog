@@ -21,20 +21,22 @@ async def read_user(user_id: int, db: Session = Depends(database.get_db)):
 
 
 @router.get("/", response_model=List[schemas.User])
-async def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db)):
+async def read_users(
+    skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db)
+):
     users = await crud.get_users(db, skip=skip, limit=limit)
     return users
 
 
 @router.post("/create", response_model=schemas.User, status_code=201)
 async def create_user(user: schemas.UserCreate, db: Session = Depends(database.get_db)):
-    db_user = await crud.get_user_by_email(db, email=user.email)
+    db_user = await crud.get_user_by_username(db, username=user.username)
     if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
+        raise HTTPException(status_code=400, detail="Username already registered")
     return await crud.create_user(db=db, user=user)
 
 
-@router.put('/update/{user_id}', status_code=200)
+@router.put("/update/{user_id}", status_code=200)
 async def update_user(
     user_id: int,
     user: schemas.UserCreate,
@@ -43,6 +45,6 @@ async def update_user(
     return await crud.update_user(user_id, db, user)
 
 
-@router.delete('/delete/{user_id}', status_code=204)
+@router.delete("/delete/{user_id}", status_code=204)
 async def delete_user(user_id: int, db: Session = Depends(database.get_db)):
     return await crud.delete_user(user_id, db)

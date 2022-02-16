@@ -2,8 +2,8 @@ from fastapi import Depends, APIRouter
 from sqlalchemy.orm import Session
 
 from . import crud, models, schemas
-from account.schemas import UserAuth
-from account.OAuth2 import get_current_user
+from account.schemas import User
+from account.authentication import get_current_active_user
 import database
 
 models.database.Base.metadata.create_all(bind=database.engine)
@@ -11,15 +11,15 @@ models.database.Base.metadata.create_all(bind=database.engine)
 router = APIRouter(prefix="/comments", tags=["comments"])
 
 
-@router.get('/all/{post_id}')
-async def read_comments(post_id: int, db: Session = Depends(database.get_db)):
-    return crud.get_all_comments(db, post_id)
+@router.get("/all/{blog_id}")
+async def read_comments(blog_id: int, db: Session = Depends(database.get_db)):
+    return await crud.get_all_comments(db, blog_id)
 
 
-@router.post('/create')
+@router.post("/create")
 async def create(
-    request: schemas.CommentBase, 
+    request: schemas.CommentBase,
     db: Session = Depends(database.get_db),
-    current_user: UserAuth = Depends(get_current_user)
+    current_user: User = Depends(get_current_active_user),
 ):
-    return crud.create_comment(db, request)
+    return await crud.create_comment(db, request)

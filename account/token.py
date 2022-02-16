@@ -1,9 +1,10 @@
 from typing import Optional
+from datetime import datetime, timedelta
 
 from jose import jwt, JWTError
+from sqlalchemy.orm import Session
 
-from datetime import datetime, timedelta
-from . import schemas
+from . import schemas, models
 
 
 SECRET_KEY = "c74b6d24704d3abf1bc11f94a8ba8a19b0a5da209723be3e4eaea861e33ed75c"
@@ -22,7 +23,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     return encoded_jwt
 
 
-def verify_token(token: str, credentials_exception):
+def verify_token(token: str, credentials_exception, db: Session):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
@@ -31,3 +32,11 @@ def verify_token(token: str, credentials_exception):
         token_data = schemas.TokenData(email=email)
     except JWTError:
         raise credentials_exception
+    user = (
+        db.query(models.User)
+        .filter(models.User.username == token_data.username)
+        .first()
+    )
+    if user is None:
+        raise credentials_exception
+    return user

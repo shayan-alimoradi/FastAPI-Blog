@@ -5,12 +5,12 @@ from datetime import datetime
 from . import models, schemas
 
 
-def create_comment(db: Session, request: schemas.CommentBase):
+async def create_comment(db: Session, request: schemas.CommentBase):
     new_comment = models.Comment(
-        username=request.username,
+        user_id=request.user_id,
         content=request.content,
-        post_id=request.post_id,
-        time_stamp=datetime.now()
+        blog_id=request.blog_id,
+        time_stamp=datetime.now(),
     )
     db.add(new_comment)
     db.commit()
@@ -18,5 +18,5 @@ def create_comment(db: Session, request: schemas.CommentBase):
     return new_comment
 
 
-def get_all_comments(db: Session, post_id: int):
-    return db.query(models.Comment).filter(models.Comment.id == post_id).all()
+async def get_all_comments(db: Session, blog_id: int):
+    return db.query(models.Comment).filter(models.Comment.id == blog_id).all()

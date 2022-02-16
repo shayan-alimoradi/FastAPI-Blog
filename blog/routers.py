@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from . import crud, models, schemas
-from account.OAuth2 import get_current_user
+from account.authentication import get_current_active_user
 from account.schemas import User, Blog
 
 import database
@@ -18,7 +18,7 @@ async def read_blogs(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(database.get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
 ):
     blogs = await crud.get_blogs(db, skip=skip, limit=limit)
     return blogs
@@ -38,22 +38,21 @@ async def read_blog(blog_id: int, db: Session = Depends(database.get_db)):
 async def create_blog(
     blog: schemas.BlogCreate,
     db: Session = Depends(database.get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
 ):
     db_blog = await crud.get_blog_by_title(db, title=blog.title)
     if db_blog:
         raise HTTPException(
-            status_code=400, 
-            detail=f"Blog with title {blog.title} already exists"
+            status_code=400, detail=f"Blog with title {blog.title} already exists"
         )
-    return crud.create_blog(db=db, blog=blog)
+    return await crud.create_blog(db=db, blog=blog)
 
 
 @router.delete("/destroy/{blog_id}", status_code=204)
 async def delete_blog(
     blog_id: int,
     db: Session = Depends(database.get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
 ):
     await crud.delete_blog(blog_id, db)
 
@@ -63,6 +62,6 @@ async def update_blog(
     blog_id: int,
     request: Blog,
     db: Session = Depends(database.get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
 ):
     return await crud.update_Blog(blog_id, request, db)

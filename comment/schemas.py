@@ -2,6 +2,6 @@ from pydantic import BaseModel
 
 
 class CommentBase(BaseModel):
-    username: str
     content: str
-    post_id: int
+    user_id: int
+    blog_id: int

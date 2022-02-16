@@ -5,7 +5,7 @@ from blog.schemas import BlogBase
 
 
 class UserBase(BaseModel):
-    email: EmailStr
+    username: str
 
 
 class UserCreate(UserBase):
@@ -39,7 +39,7 @@ class Blog(BlogBase):
 
 
 class SignIn(BaseModel):
-    email: EmailStr
+    username: str
     password: str
 
 
@@ -49,4 +49,4 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
-    email: Optional[EmailStr] = None
+    username: Optional[str] = None

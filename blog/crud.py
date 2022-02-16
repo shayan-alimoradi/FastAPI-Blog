@@ -37,11 +37,13 @@ async def update_Blog(blog_id: int, request: schemas.BlogBase, db: Session):
             status_code=404, detail=f"Blog with id {blog_id} does not exists"
         )
 
-    db_blog.update({
-        models.Blog.title: request.title,
-        models.Blog.description: request.description,
-        models.Blog.available: request.available,
-    })
+    db_blog.update(
+        {
+            models.Blog.title: request.title,
+            models.Blog.description: request.description,
+            models.Blog.available: request.available,
+        }
+    )
     db.commit()
     return "Updated Successfully"
 

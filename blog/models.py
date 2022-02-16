@@ -14,3 +14,4 @@ class Blog(database.Base):
     user_id = Column(Integer, ForeignKey("users.id"))
 
     user = relationship("User", back_populates="blogs")
+    comments = relationship("Comment", back_populates="blog_cm")
