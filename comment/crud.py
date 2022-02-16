@@ -8,7 +8,11 @@ from account.authentication import get_current_active_user
 from account.schemas import User
 
 
-async def create_comment(db: Session, request: schemas.CommentBase, current_user: User = Depends(get_current_active_user),):
+async def create_comment(
+    db: Session,
+    request: schemas.CommentBase,
+    current_user: User = Depends(get_current_active_user),
+):
     new_comment = models.Comment(
         user_id=current_user.id,
         content=request.content,
