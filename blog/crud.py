@@ -1,8 +1,10 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, Depends
 from sqlalchemy.orm import Session
 
+from account.schemas import User
+
 from . import models, schemas
-from account.schemas import Blog
+from account.authentication import get_current_active_user
 
 
 async def get_blog(db: Session, blog_id: int):
@@ -17,12 +19,16 @@ async def get_blogs(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Blog).offset(skip).limit(limit).all()
 
 
-async def create_blog(db: Session, blog: schemas.BlogCreate):
+async def create_blog(
+    db: Session,
+    blog: schemas.BlogCreate,
+    current_user: User = Depends(get_current_active_user),
+):
     db_blog = models.Blog(
         title=blog.title,
         description=blog.description,
         available=blog.available,
-        user_id=blog.user_id,
+        user_id=current_user.id,
     )
     db.add(db_blog)
     db.commit()

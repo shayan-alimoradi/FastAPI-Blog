@@ -12,4 +12,4 @@ class BlogBase(BaseModel):
 
 
 class BlogCreate(BlogBase):
-    user_id: int
+    pass

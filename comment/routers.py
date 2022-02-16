@@ -22,4 +22,4 @@ async def create(
     db: Session = Depends(database.get_db),
     current_user: User = Depends(get_current_active_user),
 ):
-    return await crud.create_comment(db, request)
+    return await crud.create_comment(db, request, current_user)

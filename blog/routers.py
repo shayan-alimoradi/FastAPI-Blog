@@ -45,7 +45,7 @@ async def create_blog(
         raise HTTPException(
             status_code=400, detail=f"Blog with title {blog.title} already exists"
         )
-    return await crud.create_blog(db=db, blog=blog)
+    return await crud.create_blog(db=db, blog=blog, current_user=current_user)
 
 
 @router.delete("/destroy/{blog_id}", status_code=204)
