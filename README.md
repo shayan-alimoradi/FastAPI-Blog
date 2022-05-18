@@ -5,6 +5,7 @@
 
 ```
     Python 3.9 - Programming Language
+    FastAPI 0.68.1 - Web API's
     Docker - Container Platform
     Pytest - Testing tool
     Git - Version Control
