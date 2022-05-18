@@ -36,13 +36,18 @@ async def create_blog(
     return db_blog
 
 
-async def update_Blog(blog_id: int, request: schemas.BlogBase, db: Session, current_user: User = Depends(get_current_active_user)):
+async def update_Blog(
+    blog_id: int,
+    request: schemas.BlogBase,
+    db: Session,
+    current_user: User = Depends(get_current_active_user),
+):
     db_blog = db.query(models.Blog).filter(models.Blog.id == blog_id).first()
     if not db_blog:
         raise HTTPException(
             status_code=404, detail=f"Blog with id {blog_id} does not exists"
         )
-    
+
     if db_blog.user_id != current_user.id:
         raise HTTPException(status_code=403, detail="You're not the owner of this blog")
 
